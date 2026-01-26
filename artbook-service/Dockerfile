@@ -26,13 +26,6 @@ WORKDIR /app
 # Update 'target/*.jar' if your build produces a specific name
 COPY --from=build /app/target/*.jar app.jar
 
-# Copy the pre-deploy script ---
-COPY pre_deploy.sh ./artbook-service
-
-# Make the script executable ---
-# This is crucial; otherwise, Render encounters a "Permission denied" error.
-RUN chmod +x artbook-service/pre_deploy.sh
-
 # Expose the port your Java app listens on (standard is 8080)
 EXPOSE 8080
 
