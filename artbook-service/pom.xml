@@ -18,6 +18,7 @@
     </properties>
 
     <build>
+        <finalName>artbook-service</finalName>
         <pluginManagement>
             <plugins>
                 <plugin>

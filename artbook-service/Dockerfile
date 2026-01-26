@@ -26,6 +26,13 @@ WORKDIR /app
 # Update 'target/*.jar' if your build produces a specific name
 COPY --from=build /app/target/*.jar app.jar
 
+# Copy the pre-deploy script ---
+COPY pre_deploy.sh .
+
+# Make the script executable ---
+# This is crucial; otherwise, Render encounters a "Permission denied" error.
+RUN chmod +x pre_deploy.sh
+
 # Expose the port your Java app listens on (standard is 8080)
 EXPOSE 8080
 
