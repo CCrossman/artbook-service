@@ -17,13 +17,13 @@ import java.sql.*;
 public class StatusController {
     private static final Logger logger = LoggerFactory.getLogger(StatusController.class);
 
-    @Value("{app.location.config}")
+    @Value("${app.location.config}")
     private String configPath;
 
-    @Value("{app.location.storage}")
+    @Value("${app.location.storage}")
     private String storagePath;
 
-    @Value("{health.verify.fail-hard}")
+    @Value("${health.verify.fail-hard}")
     private Boolean failHard;
 
     // GET http://localhost:8080/api/v1/status/health
