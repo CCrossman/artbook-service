@@ -12,7 +12,7 @@ import java.net.URISyntaxException;
 
 @Configuration
 public class DataSourceConfig {
-    private static final int DEFAULT_PORT = 10000;
+    private static final int DEFAULT_PORT = 5432;
 
     @Bean
     public DataSource dataSource(@Value("${DATABASE_URL}") String dbUrl) throws URISyntaxException {
