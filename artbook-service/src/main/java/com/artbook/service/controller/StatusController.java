@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.*;
 
@@ -14,6 +15,9 @@ public class StatusController {
 
     @Value("{app.location.config}")
     private String configPath;
+
+    @Value("{app.location.storage}")
+    private String storagePath;
 
     // GET http://localhost:8080/api/v1/status/health
     @GetMapping("/health")
@@ -33,11 +37,17 @@ public class StatusController {
         }
 
         // connect to file space
-        if (!Files.exists(Paths.get(configPath))) {
-            throw new IOException("'" + configPath + "' does not exist");
-        }
+        verifyPathUsable(configPath);
+        verifyPathUsable(storagePath);
 
         // everything looks good
         return "System is up and running!";
+    }
+
+    private static void verifyPathUsable(String rawPath) throws IOException {
+        Path path = Paths.get(rawPath);
+        if (!Files.isReadable(path) || !Files.isWritable(path)) {
+            throw new IOException("Cannot read or write '" + rawPath + "'");
+        }
     }
 }
