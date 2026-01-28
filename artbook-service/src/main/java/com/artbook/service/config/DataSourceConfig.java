@@ -12,6 +12,7 @@ import java.net.URISyntaxException;
 
 @Configuration
 public class DataSourceConfig {
+    private static final int DEFAULT_PORT = 10000;
 
     @Bean
     public DataSource dataSource(@Value("${DATABASE_URL}") String dbUrl) throws URISyntaxException {
@@ -26,7 +27,8 @@ public class DataSourceConfig {
         // Reconstruct the JDBC URL
         // From: postgres://user:pass@host:port/path
         // To:   jdbc:postgresql://host:port/path
-        String jdbcUrl = "jdbc:postgresql://" + uri.getHost() + ":" + uri.getPort() + uri.getPath();
+        int port = uri.getPort() == -1 ? DEFAULT_PORT : uri.getPort();
+        String jdbcUrl = "jdbc:postgresql://" + uri.getHost() + ":" + port + uri.getPath();
 
         // Configure the Pool
         HikariConfig config = new HikariConfig();
