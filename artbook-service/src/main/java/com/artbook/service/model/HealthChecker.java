@@ -27,7 +27,7 @@ public class HealthChecker {
     @Value("${app.location.storage}")
     private String storagePath;
 
-    @Autowired
+    @Autowired(required = false)
     private DataSource dataSource;
 
     public void checkHealth(boolean failHard) throws SQLException, IOException {
