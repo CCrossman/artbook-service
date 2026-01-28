@@ -22,9 +22,20 @@ public class StatusController {
     // GET http://localhost:8080/api/v1/status/health
     @GetMapping("/health")
     public String checkHealth() throws SQLException, IOException {
+        // connect to artbook-db
+        verifyDriverConnection();
+
+        // connect to file space
+        verifyPathUsable(configPath);
+        verifyPathUsable(storagePath);
+
+        // everything looks good
+        return "System is up and running!";
+    }
+
+    private static void verifyDriverConnection() throws SQLException {
         String postgresURL = System.getenv("DATABASE_URL");
 
-        // connect to artbook-db
         try (Connection conn = DriverManager.getConnection(postgresURL)) {
             try (PreparedStatement stmt = conn.prepareStatement("SELECT 1")) {
                 try (ResultSet rs = stmt.executeQuery()) {
@@ -35,13 +46,6 @@ public class StatusController {
                 }
             }
         }
-
-        // connect to file space
-        verifyPathUsable(configPath);
-        verifyPathUsable(storagePath);
-
-        // everything looks good
-        return "System is up and running!";
     }
 
     private static void verifyPathUsable(String rawPath) throws IOException {
