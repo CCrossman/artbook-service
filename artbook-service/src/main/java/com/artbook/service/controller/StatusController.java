@@ -2,9 +2,11 @@ package com.artbook.service.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
+import javax.sql.DataSource;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.InvalidPathException;
@@ -26,6 +28,9 @@ public class StatusController {
     @Value("${health.verify.fail-hard}")
     private Boolean failHard;
 
+    @Autowired
+    private DataSource dataSource;
+
     // GET http://localhost:8080/api/v1/status/health
     @GetMapping("/health")
     public String checkHealth() throws SQLException, IOException {
@@ -41,17 +46,12 @@ public class StatusController {
     }
 
     private void verifyDriverConnection() throws SQLException {
-        try {
-            String postgresURL = System.getenv("DATABASE_URL");
-            logger.atDebug().log("database url: " + postgresURL);
-
-            try (Connection conn = DriverManager.getConnection(postgresURL)) {
-                try (PreparedStatement stmt = conn.prepareStatement("SELECT 1")) {
-                    try (ResultSet rs = stmt.executeQuery()) {
-                        boolean hasRecord = rs.next();
-                        if (!hasRecord) {
-                            throw new SQLException("SELECT 1 returned nothing");
-                        }
+        try (Connection conn = dataSource.getConnection()) {
+            try (PreparedStatement stmt = conn.prepareStatement("SELECT 1")) {
+                try (ResultSet rs = stmt.executeQuery()) {
+                    boolean hasRecord = rs.next();
+                    if (!hasRecord) {
+                        throw new SQLException("SELECT 1 returned nothing");
                     }
                 }
             }
