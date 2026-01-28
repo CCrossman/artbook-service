@@ -26,5 +26,6 @@ public class StatusController {
     public void checkHealth() throws SQLException, IOException {
         boolean shouldFailHard = Boolean.TRUE.equals(failHard);
         healthChecker.checkHealth(shouldFailHard);
+        logger.atDebug().log("Health check passed.");
     }
 }
