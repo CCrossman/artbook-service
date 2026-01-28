@@ -3,6 +3,7 @@ package com.artbook.service.config;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -15,6 +16,7 @@ public class DataSourceConfig {
     private static final int DEFAULT_PORT = 5432;
 
     @Bean
+    @ConditionalOnProperty(name = "DATABASE_URL")
     public DataSource dataSource(@Value("${DATABASE_URL}") String dbUrl) throws URISyntaxException {
         // Parse the "postgres://..." string using Java's URI class
         URI uri = new URI(dbUrl);
