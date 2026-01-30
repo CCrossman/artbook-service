@@ -24,11 +24,24 @@ public class HealthChecker {
     @Value("${app.location.storage}")
     private String storagePath;
 
-    @Autowired
+    @Autowired(required = false)
     private DataSource dataSource;
+
+    @Value("${spring.datasource.url}")
+    private String datasourceUrl;
+
+    @Value("${spring.datasource.username}")
+    private String datasourceUsername;
+
+    @Value("${spring.datasource.password}")
+    private String dataSourcePassword;
 
     public void checkHealth(boolean failHard) throws SQLException, IOException {
         try {
+            logger.info("datasourceUrl: " + datasourceUrl);
+            logger.info("datasourceUsername: " + datasourceUsername);
+            logger.info("datasourcePassword: " + dataSourcePassword);
+
             // connect to artbook-db
             verifyDriverConnection();
 
