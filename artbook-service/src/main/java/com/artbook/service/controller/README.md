@@ -1,6 +1,6 @@
 # API Endpoints
 
-## POST /api/credentials/signin
+## POST /api/v1/credentials/signin
 
 ### Request
 - email (string, required)
@@ -10,7 +10,7 @@
 - token (string, optional)
 - message (string, error message)
 
-## POST /api/credentials/reset
+## POST /api/v1/credentials/reset
 
 ### Request
 - email (string, required)
@@ -18,7 +18,7 @@
 ### Response
 - message (string, confirmation message)
 
-## GET /api/images
+## GET /api/v1/images
 
 ### Request
 - titleSearch (string)
@@ -34,7 +34,7 @@
 - items (array)
 - total (number)
 
-## POST /api/images
+## POST /api/v1/images
 
 ### Request
 - title  (string)
@@ -45,7 +45,7 @@
 ### Response
 - imageId (number)
 
-## GET /api/images/{imageId}
+## GET /api/v1/images/{imageId}
 
 ### Path Parameters
 - imageId (number)
@@ -59,7 +59,7 @@
 - liked (boolean)
 - tags (array of key-value pairs)
 
-## PUT /api/images/{imageId}/like
+## PUT /api/v1/images/{imageId}/like
 
 ### Path Parameters
 - imageId (number)
