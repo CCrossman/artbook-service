@@ -11,38 +11,38 @@ import javax.sql.DataSource;
 import java.net.URI;
 import java.net.URISyntaxException;
 
-@Configuration
+//@Configuration
 public class DataSourceConfig {
     private static final int DEFAULT_PORT = 5432;
 
-    @Bean
-    @ConditionalOnProperty(name = "DATABASE_URL")
-    public DataSource dataSource(@Value("${DATABASE_URL}") String dbUrl) throws URISyntaxException {
-        // Parse the "postgres://..." string using Java's URI class
-        URI uri = new URI(dbUrl);
-
-        // Extract credentials
-        String[] uriParts = uri.getUserInfo().split(":");
-        String username = uriParts[0];
-        String password = uriParts[1];
-
-        // Reconstruct the JDBC URL
-        // From: postgres://user:pass@host:port/path
-        // To:   jdbc:postgresql://host:port/path
-        int port = uri.getPort() == -1 ? DEFAULT_PORT : uri.getPort();
-        String jdbcUrl = "jdbc:postgresql://" + uri.getHost() + ":" + port + uri.getPath();
-
-        // Configure the Pool
-        HikariConfig config = new HikariConfig();
-        config.setJdbcUrl(jdbcUrl);
-        config.setUsername(username);
-        config.setPassword(password);
-
-        // Render requires SSL for external connections (and often internal ones)
-        // This ensures the driver uses SSL
-        config.addDataSourceProperty("ssl", "true");
-        config.addDataSourceProperty("sslmode", "require");
-
-        return new HikariDataSource(config);
-    }
+//    @Bean
+//    @ConditionalOnProperty(name = "DATABASE_URL")
+//    public DataSource dataSource(@Value("${DATABASE_URL}") String dbUrl) throws URISyntaxException {
+//        // Parse the "postgres://..." string using Java's URI class
+//        URI uri = new URI(dbUrl);
+//
+//        // Extract credentials
+//        String[] uriParts = uri.getUserInfo().split(":");
+//        String username = uriParts[0];
+//        String password = uriParts[1];
+//
+//        // Reconstruct the JDBC URL
+//        // From: postgres://user:pass@host:port/path
+//        // To:   jdbc:postgresql://host:port/path
+//        int port = uri.getPort() == -1 ? DEFAULT_PORT : uri.getPort();
+//        String jdbcUrl = "jdbc:postgresql://" + uri.getHost() + ":" + port + uri.getPath();
+//
+//        // Configure the Pool
+//        HikariConfig config = new HikariConfig();
+//        config.setJdbcUrl(jdbcUrl);
+//        config.setUsername(username);
+//        config.setPassword(password);
+//
+//        // Render requires SSL for external connections (and often internal ones)
+//        // This ensures the driver uses SSL
+//        config.addDataSourceProperty("ssl", "true");
+//        config.addDataSourceProperty("sslmode", "require");
+//
+//        return new HikariDataSource(config);
+//    }
 }

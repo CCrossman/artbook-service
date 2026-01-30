@@ -44,6 +44,7 @@ public class HealthChecker {
     }
 
     private void verifyDriverConnection() throws SQLException {
+        logger.info("verifyDriverConnection(" + dataSource + ")");
         if (dataSource != null) {
             try (Connection conn = dataSource.getConnection()) {
                 try (PreparedStatement stmt = conn.prepareStatement("SELECT 1")) {
@@ -59,6 +60,7 @@ public class HealthChecker {
     }
 
     private void verifyPathUsable(String rawPath) throws InvalidPathException, IOException {
+        logger.info("verifyPathUsable(" + rawPath + ")");
         // FIXME
 //        Path path = Paths.get(rawPath);
 //        Files.createDirectories(path, OWNER_RWE);

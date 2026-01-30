@@ -14,7 +14,7 @@ RUN mvn dependency:go-offline -B
 COPY src ./src
 
 # Build the application (skip tests to speed up deploy)
-RUN mvn clean flyway:migrate package -DskipTests
+RUN mvn clean package -DskipTests
 
 # --- Stage 2: Create the runtime image ---
 FROM eclipse-temurin:17-jre-alpine
