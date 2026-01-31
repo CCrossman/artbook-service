@@ -24,7 +24,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.PUT, "/api/v1/images/*/like").authenticated()
 
                 // 2. SPECIFIC RULE but not authenticated
-                .requestMatchers(HttpMethod.POST, "/api/v1/credentials/reset").hasAnyRole(Roles.labels())
+                //.requestMatchers(HttpMethod.POST, "/api/v1/credentials/reset").hasAnyRole(Roles.labels())
 
                 // 3. CATCH-ALL RULE: Allow everything else
                 .anyRequest().permitAll()

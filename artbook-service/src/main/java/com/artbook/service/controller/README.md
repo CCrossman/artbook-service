@@ -21,11 +21,11 @@
 ## GET /api/v1/images
 
 ### Request
-- titleSearch (string)
+- title (string)
 - tags (string, comma-separated)
 - startDate (string)
 - endDate (string)
-- page (number)
+- pageNo (number)
 - pageSize (number)
 - sortBy (string)
 - sortOrder (string)
