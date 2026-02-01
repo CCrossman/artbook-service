@@ -1,5 +1,7 @@
 package com.artbook.service.controller;
 
+import com.artbook.service.domain.ResetRequest;
+import com.artbook.service.domain.ResetResponse;
 import com.artbook.service.domain.SigninRequest;
 import com.artbook.service.domain.SigninResponse;
 import com.artbook.service.util.DAOHelper;
@@ -17,9 +19,9 @@ public class CredentialsController {
     private DAOHelper daoHelper;
 
     @PostMapping("/reset")
-    public String reset(@RequestParam(name = "email") String email) {
-        logger.info("Resetting credentials for '{}'...", email);
-        return "Not Yet Implemented";
+    public ResetResponse reset(@RequestBody ResetRequest request) {
+        logger.info("Resetting credentials for '{}'...", request);
+        return new ResetResponse("Not Yet Implemented");
     }
 
     @PostMapping("/signin")

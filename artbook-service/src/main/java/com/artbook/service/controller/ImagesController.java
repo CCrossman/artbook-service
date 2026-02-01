@@ -1,14 +1,13 @@
 package com.artbook.service.controller;
 
 import com.artbook.service.domain.ImageDTO;
-import com.artbook.service.domain.ImageSearchRequest;
-import com.artbook.service.domain.ImageUploadRequest;
 import com.artbook.service.domain.Page;
 import com.artbook.service.util.DAOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -20,8 +19,8 @@ public class ImagesController {
     private DAOHelper daoHelper;
 
     @GetMapping
-    public Page<ImageDTO> getImages(@RequestBody ImageSearchRequest request) {
-        logger.info("getImages: {}", request);
+    public Page<ImageDTO> getImages(@RequestParam MultiValueMap<String, String> queryParams) {
+        logger.info("getImages: {}", queryParams);
         throw new UnsupportedOperationException();
     }
 
@@ -32,7 +31,7 @@ public class ImagesController {
     }
 
     @PostMapping
-    public ResponseEntity<Long> uploadImage(@RequestBody ImageUploadRequest request) {
+    public ResponseEntity<Long> uploadImage(@RequestBody Object request) {
         logger.info("uploadImage: {}", request);
         // returns imageId
         throw new UnsupportedOperationException();
