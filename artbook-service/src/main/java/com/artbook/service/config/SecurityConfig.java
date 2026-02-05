@@ -1,44 +1,63 @@
 package com.artbook.service.config;
 
+import com.artbook.service.service.JwtAuthenticationEntryPoint;
+import com.artbook.service.service.JwtAuthenticationFilter;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
-    private static final String AUDIENCE = "artbook-service-generic-auth";
-    private static final String ISSUER = "https://artbook-ui.onrender.com";
+
+    @Autowired
+    private JwtAuthenticationFilter jwtAuthFilter;
+
+    @Autowired
+    private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        return http
-            .csrf(csrf -> csrf.disable()) // Disable CSRF for stateless APIs
-            .authorizeHttpRequests(auth -> auth
-                // 1. SPECIFIC RULE: Lock down POST requests to /api/v1/images
-                .requestMatchers(HttpMethod.POST, "/api/v1/images").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/images/*/like").authenticated()
-
-                // 2. SPECIFIC RULE but not authenticated
-                //.requestMatchers(HttpMethod.POST, "/api/v1/credentials/reset").hasAnyRole(Roles.labels())
-
-                // 3. CATCH-ALL RULE: Allow everything else
-                .anyRequest().permitAll()
-            )
-            .build();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public JwtDecoder jwtDecoder() {
-        return new JwtDecoder() {
-            @Override
-            public Jwt decode(String token) throws JwtException {
-                throw new UnsupportedOperationException();
-            }
-        };
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+        http
+            .csrf(AbstractHttpConfigurer::disable)        // disable CSRF for stateless APIs
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(HttpMethod.GET, "/api/v1/images").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/images/*").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/images").authenticated()
+                .requestMatchers(HttpMethod.PUT, "/api/v1/images/*/like").authenticated()
+                .anyRequest().denyAll()
+            )
+            .formLogin(Customizer.withDefaults())       // Enables the default login page
+            .httpBasic(Customizer.withDefaults())       // Enables API basic auth
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
+            )
+            .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
+        return http.build();
     }
 }
