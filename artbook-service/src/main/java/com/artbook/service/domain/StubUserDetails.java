@@ -14,10 +14,11 @@ import static com.artbook.service.util.Preconditions.requireNonEmpty;
 @ToString
 public class StubUserDetails implements UserDetails {
     private final GrantedAuthority grantedAuthority;
-    private final String email;
+    private final String email, password;
 
-    public StubUserDetails(String email, String rawGrantedAuthority) {
+    public StubUserDetails(String email, String password, String rawGrantedAuthority) {
         this.email = requireNonEmpty(email);
+        this.password = requireNonEmpty(password);
         this.grantedAuthority = () -> rawGrantedAuthority;
     }
 
@@ -28,7 +29,7 @@ public class StubUserDetails implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "STUBBED";
+        return password;
     }
 
     @Override

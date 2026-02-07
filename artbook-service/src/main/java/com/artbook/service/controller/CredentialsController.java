@@ -33,7 +33,7 @@ public class CredentialsController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<?> authenticateUser(@RequestBody SigninRequest signinRequest) {
+    public ResponseEntity<SigninResponse> authenticateUser(@RequestBody SigninRequest signinRequest) {
         try {
             // Authenticate the user
             // This line will throw a BadCredentialsException if the password is wrong
