@@ -2,9 +2,12 @@ package com.artbook.service.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -15,11 +18,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Map;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private static final ObjectMapper mapper = new ObjectMapper();
 
     @Autowired
@@ -33,23 +35,22 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         @NonNull HttpServletRequest request,
         @NonNull HttpServletResponse response,
         @NonNull FilterChain filterChain
-    ) throws IOException {
+    ) throws IOException, ServletException {
         try {
             final String authHeader = request.getHeader("Authorization");
-            final String jwt;
-            final String userEmail;
 
             // Check if the header exists and starts with "Bearer "
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                logger.atDebug().log("Authorization header not found. Moving on to the next filter.");
                 filterChain.doFilter(request, response);
                 return;
             }
 
             // Extract the token (substring 7 removes "Bearer ")
-            jwt = authHeader.substring(7);
+            String jwt = authHeader.substring(7);
 
             // Extract username (subject) from the token
-            userEmail = jwtService.extractUsername(jwt);
+            String userEmail = jwtService.extractUsername(jwt);
 
             // Validate token and set context if user is not already authenticated
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -70,15 +71,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-
-            // Continue the filter chain
-            filterChain.doFilter(request, response);
         } catch (Exception e) {
-            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-            response.setContentType("application/json");
+            logger.error("Could not set user authentication in security context", e);
 
-            Map<String, Object> error = Map.of("error", "Invalid token", "status", 401);
-            response.getWriter().write(mapper.writeValueAsString(error));
+            // IMPORTANT: If token parsing fails, do not throw exception here.
+            // Just log it and continue. The SecurityContext will remain anonymous.
+            // If the endpoint requires auth, Spring Security will catch it later.
         }
+
+        // Continue the filter chain
+        filterChain.doFilter(request, response);
     }
 }
