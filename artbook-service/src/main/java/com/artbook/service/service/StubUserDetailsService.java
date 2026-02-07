@@ -21,6 +21,6 @@ public class StubUserDetailsService implements UserDetailsService {
         if ("seejo.crux@gmail.com".equals(username)) {
             return new StubUserDetails(username, stubbedPassword, "registered-viewer");
         }
-        return new StubUserDetails(username, null, "guest");
+        throw new UsernameNotFoundException("User not found: '" + username + "'");
     }
 }

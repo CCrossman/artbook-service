@@ -58,7 +58,7 @@ public class SecurityConfig {
         config.addAllowedHeader("*");
 
         // Allow specific HTTP methods, including OPTIONS for preflight requests
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
 
         // Allow credentials (e.g., cookies, authorization headers)
         config.setAllowCredentials(true);
@@ -74,13 +74,10 @@ public class SecurityConfig {
             .cors(Customizer.withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/v1/credentials/signin").permitAll()
-                .requestMatchers("/api/v1/status/*").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/images").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/v1/images/*").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/v1/images").authenticated()
-                .requestMatchers(HttpMethod.PUT, "/api/v1/images/*/like").authenticated()
-                .anyRequest().denyAll()
+                .requestMatchers(HttpMethod.POST, "/api/v1/credentials/reset").authenticated()
+                .requestMatchers(HttpMethod.POST, "/api/v1/images").hasAuthority("registered-artist")
+                .requestMatchers(HttpMethod.PUT, "/api/v1/images/*/like").hasAnyAuthority("registered-viewer", "registered-artist")
+                .anyRequest().permitAll()
             )
             .formLogin(Customizer.withDefaults())       // Enables the default login page
             .httpBasic(Customizer.withDefaults())       // Enables API basic auth
