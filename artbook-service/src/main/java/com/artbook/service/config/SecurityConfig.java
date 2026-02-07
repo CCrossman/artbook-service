@@ -18,6 +18,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.Arrays;
 
 @Configuration
 @EnableWebSecurity
@@ -40,9 +45,33 @@ public class SecurityConfig {
     }
 
     @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        CorsConfiguration config = new CorsConfiguration();
+
+        // Allow specific origins (replace with your frontend's actual URL on Render/Heroku)
+        // During development you might use "http://localhost:3000", but in production
+        // you must specify the live URL (e.g., "https://your-frontend-app.onrender.com")
+        config.setAllowedOrigins(Arrays.asList("https://artbook-ui.onrender.com", "http://localhost:5173"));
+
+        // Allow all headers
+        config.addAllowedHeader("*");
+
+        // Allow specific HTTP methods, including OPTIONS for preflight requests
+        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+
+        // Allow credentials (e.g., cookies, authorization headers)
+        config.setAllowCredentials(true);
+
+        source.registerCorsConfiguration("/**", config); // Apply this configuration to all paths
+        return source;
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .csrf(AbstractHttpConfigurer::disable)        // disable CSRF for stateless APIs
+            .cors(Customizer.withDefaults())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/v1/credentials/signin").permitAll()
