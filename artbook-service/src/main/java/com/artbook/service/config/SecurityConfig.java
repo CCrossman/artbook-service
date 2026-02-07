@@ -45,6 +45,7 @@ public class SecurityConfig {
             .csrf(AbstractHttpConfigurer::disable)        // disable CSRF for stateless APIs
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/v1/credentials/*").permitAll()
                 .requestMatchers("/api/v1/status/*").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/images").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/images/*").permitAll()
