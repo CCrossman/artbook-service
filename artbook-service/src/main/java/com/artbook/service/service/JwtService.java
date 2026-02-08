@@ -16,6 +16,8 @@ import java.security.Key;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
 
 @Service
@@ -33,7 +35,12 @@ public class JwtService {
 
         Instant now = Instant.now();
 
+        // example of adding "limitations" via the JWT token
+        Map<String, Object> limits = new HashMap<>();
+
         return Jwts.builder()
+            .claim("limits", limits)
+            .claim("permissions", userPrincipal.getAuthorities())
             .setSubject(userPrincipal.getUsername())
             .setIssuedAt(Date.from(now))
             .setExpiration(Date.from(now.plus(EXPIRATION_TIME)))

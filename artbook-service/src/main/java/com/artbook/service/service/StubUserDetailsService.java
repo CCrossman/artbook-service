@@ -16,11 +16,34 @@ public class StubUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         if ("seejo.crux.x@gmail.com".equals(username)) {
-            return new StubUserDetails(username, stubbedPassword, "registered-artist");
+            return new StubUserDetails(username, stubbedPassword, getPermissionsForRegisteredArtist());
         }
         if ("seejo.crux@gmail.com".equals(username)) {
-            return new StubUserDetails(username, stubbedPassword, "registered-viewer");
+            return new StubUserDetails(username, stubbedPassword, getPermissionsForRegisteredViewer());
         }
         throw new UsernameNotFoundException("User not found: '" + username + "'");
+    }
+
+    private String[] getPermissionsForRegisteredViewer() {
+        return new String[] {
+            "view_full_image",
+            "view_gallery",
+            "view_registered_user",
+            "use_image_like",
+            "use_follow",
+            "use_image_report",
+        };
+    }
+
+    private static String[] getPermissionsForRegisteredArtist() {
+        return new String[] {
+            "view_full_image",
+            "view_gallery",
+            "view_registered_user",
+            "use_image_like",
+            "use_image_upload",
+            "use_follow",
+            "use_image_report",
+        };
     }
 }
