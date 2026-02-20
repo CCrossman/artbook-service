@@ -15,7 +15,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.oauth2.jwt.*;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
@@ -23,10 +22,14 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
+    private static final List<String> ALLOWED_METHODS = Arrays.stream(HttpMethod.values())
+        .map(hm -> hm.name().toUpperCase())
+        .toList();
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthFilter;
@@ -58,7 +61,7 @@ public class SecurityConfig {
         config.addAllowedHeader("*");
 
         // Allow specific HTTP methods, including OPTIONS for preflight requests
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS", "HEAD"));
+        config.setAllowedMethods(ALLOWED_METHODS);
 
         // Allow credentials (e.g., cookies, authorization headers)
         config.setAllowCredentials(true);
