@@ -47,8 +47,8 @@ public class ImagesController {
                 .retrieve()
                 .toEntity(new ParameterizedTypeReference<Page<String>>() {});
 
-            Page<JsonNode> body = response.getBody().map(this::readTree);
-            return ResponseEntity.status(response.getStatusCode()).body(body);
+            Page<JsonNode> newContent = response.getBody().map(this::readTree);
+            return new ResponseEntity<>(newContent, response.getHeaders(), response.getStatusCode());
         } catch (Exception ex) {
             logger.error("Error reading images", ex);
             return ResponseEntity.internalServerError()
@@ -69,7 +69,7 @@ public class ImagesController {
                 .toEntity(String.class);
 
             JsonNode jsonBody = objectMapper.readTree(response.getBody());
-            return ResponseEntity.status(response.getStatusCode()).body(jsonBody);
+            return new ResponseEntity<>(jsonBody, response.getHeaders(), response.getStatusCode());
         } catch (Exception ex) {
             logger.error("Error reading image file", ex);
             return ResponseEntity.internalServerError()
@@ -109,7 +109,7 @@ public class ImagesController {
                 .toEntity(String.class);
 
             JsonNode jsonBody = objectMapper.readTree(response.getBody());
-            return ResponseEntity.status(response.getStatusCode()).body(jsonBody);
+            return new ResponseEntity<>(jsonBody, response.getHeaders(), response.getStatusCode());
         } catch (Exception ex) {
             logger.error("Problem uploading image.", ex);
             return ResponseEntity.internalServerError()
